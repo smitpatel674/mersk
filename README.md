@@ -9,7 +9,8 @@ and main backend stay on Vercel.
 2. Copy this folder to EC2 and run `npm install --omit=dev`.
 3. Copy `.env.example` to `.env` and set a long random
    `MAERSK_SERVICE_SECRET`.
-4. Confirm `CHROME_EXECUTABLE_PATH` using `which google-chrome`.
+4. Chrome/Chromium is detected automatically. Set `CHROME_EXECUTABLE_PATH` only
+   when Chrome is installed in a non-standard location.
 5. Run `npm start` behind an HTTPS reverse proxy and a process manager.
 6. Permit inbound traffic only from the required proxy/network where possible.
 

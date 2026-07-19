@@ -1,4 +1,5 @@
 import { chromium } from 'playwright-core';
+import { existsSync } from 'node:fs';
 
 const clean = (value = '') => String(value).replace(/\s+/g, ' ').trim();
 
@@ -7,10 +8,24 @@ const formatDateForInput = (dateText = '') => {
     return Number.isNaN(date.getTime()) ? '' : date.toISOString().slice(0, 10);
 };
 
+const chromeExecutablePath = () => {
+    const configuredPath = String(process.env.CHROME_EXECUTABLE_PATH || '').trim();
+    const candidates = [
+        configuredPath,
+        '/usr/bin/google-chrome',
+        '/usr/bin/google-chrome-stable',
+        '/usr/bin/chromium',
+        '/usr/bin/chromium-browser',
+        '/snap/bin/chromium',
+        '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    ].filter(Boolean);
+    return candidates.find((candidate) => existsSync(candidate)) || null;
+};
+
 export async function trackMaerskShipment(trackingNumber) {
-    const executablePath = String(process.env.CHROME_EXECUTABLE_PATH || '').trim();
+    const executablePath = chromeExecutablePath();
     if (!executablePath) {
-        throw new Error('CHROME_EXECUTABLE_PATH is not configured');
+        throw new Error('Chrome or Chromium was not found. Install it or set CHROME_EXECUTABLE_PATH.');
     }
 
     const browser = await chromium.launch({
